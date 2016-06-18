@@ -1,7 +1,6 @@
 package com.example.pbhopalka.popularmovies;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -58,7 +57,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView.setAdjustViewBounds(true);
             imageView.setPadding(0,0,0,0);
         }
-        Log.v(LOG_TAG, BASE_URL + POSTER_SIZE + posterPath.get(position));
+        //Log.v(LOG_TAG, BASE_URL + POSTER_SIZE + posterPath.get(position));
         Picasso.with(mContext).load(BASE_URL + POSTER_SIZE + posterPath.get(position)).into(imageView);
 
         return imageView;
