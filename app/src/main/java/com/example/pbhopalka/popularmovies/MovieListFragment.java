@@ -1,11 +1,14 @@
 package com.example.pbhopalka.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -33,7 +37,9 @@ import java.util.ArrayList;
 public class MovieListFragment extends Fragment {
 
     ArrayList<String> posterPaths;
+    JSONArray movieLists;
     GridView gridView;
+    ProgressBar spinner;
 
     public MovieListFragment() {
         // Required empty public constructor
@@ -60,22 +66,48 @@ public class MovieListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_movie_list, container, false);
+        View parentView = inflater.inflate(R.layout.activity_main, container, false);
+
         gridView = (GridView)rootView.findViewById(R.id.gridView);
+        spinner = (ProgressBar)parentView.findViewById(R.id.progressBar);
+        spinner.setVisibility(View.VISIBLE);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "This is a click", Toast.LENGTH_SHORT).show();
+                JSONObject movie = null;
+                try {
+
+                    movie = movieLists.getJSONObject(position);
+                    Log.v(getActivity().getClass().getSimpleName(), movie + "");
+                    Intent intent = new Intent(getActivity(), MovieDetails.class);
+                    intent.putExtra("movie", movie.toString());
+                    startActivity(intent);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
-        if (isNetworkConnected())
-            new FetchMovie().execute();
+        updateMovieList();
+
+        return rootView;
+    }
+
+    private void updateMovieList(){
+        if (isNetworkConnected()){
+
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String sortOrder = pref.getString("sort", "popular");
+
+            new FetchMovie().execute(sortOrder);
+            spinner.setVisibility(View.GONE);
+        }
         else{
             Log.v(MainActivity.class.getSimpleName(), "No Internet connection");
             Toast.makeText(getActivity(), "Please connect to the Internet", Toast.LENGTH_SHORT).show();
         }
-        return rootView;
     }
 
     private boolean isNetworkConnected() {
@@ -84,7 +116,14 @@ public class MovieListFragment extends Fragment {
         return activeNetInfo != null && activeNetInfo.isConnected();
     }
 
-    public class FetchMovie extends AsyncTask<Void, Void, JSONArray> {
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateMovieList();
+    }
+
+    /*Use Android Volley or other instead of AsyncTask */
+    public class FetchMovie extends AsyncTask<String, Void, JSONArray> {
 
         private final String LOG_TAG = FetchMovie.class.getSimpleName();
 
@@ -99,12 +138,12 @@ public class MovieListFragment extends Fragment {
         }
 
         @Override
-        protected JSONArray doInBackground(Void... params) {
+        protected JSONArray doInBackground(String... params) {
 
             HttpURLConnection connection = null;
             BufferedReader reader = null;
 
-            final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+            final String BASE_URL = "http://api.themoviedb.org/3/movie/" + params[0] + "?";
             final String API_PARAM = "api_key";
 
             String array;
@@ -122,6 +161,8 @@ public class MovieListFragment extends Fragment {
                 connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.connect();
+
+                Log.v(getClass().getSimpleName(), "Internet Connected");
 
                 InputStream stream = connection.getInputStream();
                 if (stream == null)
@@ -145,6 +186,7 @@ public class MovieListFragment extends Fragment {
 
                 try{
                     JSONArray movie = getMovieList(array);
+                    Log.v(LOG_TAG, movie.toString());
                     return movie;
                 } catch (JSONException e){
 
@@ -172,16 +214,21 @@ public class MovieListFragment extends Fragment {
 
             final String POSTER_PATH = "poster_path";
 
-            if (jsonArray == null)
+            if (jsonArray == null){
+                Toast.makeText(getActivity(), "Something is wrong. Please try again later.", Toast.LENGTH_SHORT).show();
                 return;
+            }
 
+            movieLists = new JSONArray();
             posterPaths = new ArrayList<String>();
 
             for(int i = 0; i < jsonArray.length(); i++){
                 try{
 
                     JSONObject object = jsonArray.getJSONObject(i);
+                    movieLists.put(object);
                     posterPaths.add(object.getString(POSTER_PATH));
+
 
                 } catch (JSONException e) {
 

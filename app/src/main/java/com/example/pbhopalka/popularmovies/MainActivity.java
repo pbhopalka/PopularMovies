@@ -6,6 +6,9 @@ import android.preference.PreferenceActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new MovieListFragment())
@@ -28,12 +32,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String EXTRA_SHOW_FRAGMENT = ":android:show_fragment";
-        String EXTRA_NO_HEADERS = ":android:no_headers";
+        //String EXTRA_SHOW_FRAGMENT = ":android:show_fragment";
+        //String EXTRA_NO_HEADERS = ":android:no_headers";
         int itemId = item.getItemId();
         if (itemId == R.id.action_settings){
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
-            settingsIntent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.GeneralPreferenceFragment.class.getName());
+            settingsIntent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT,
+                    SettingsActivity.GeneralPreferenceFragment.class.getName());
             settingsIntent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
             startActivity(settingsIntent);
             return true;
