@@ -95,7 +95,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Overview"
+            android:text="@string/overview"
             android:id="@+id/synopsis"
             android:layout_below="@+id/relativeLayout"
             android:padding="20dp"
@@ -110,7 +110,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Trailer"
+            android:text="@string/trailer"
             android:id="@+id/trailer_title"
             android:layout_below="@+id/divider1"
             android:paddingTop="5dp"
@@ -122,9 +122,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Trailer 1"
+            android:text="@string/trailer1"
             android:id="@+id/trailer1"
             android:padding="20dp"
+            android:drawableLeft="@drawable/ic_play_arrow"
+            android:drawablePadding="5dp"
             android:layout_below="@+id/trailer_title"
             android:layout_alignParentStart="true"
             android:textColor="@color/colorSecondaryText"/>
@@ -133,8 +135,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Trailer 2"
+            android:text="@string/trailer2"
             android:id="@+id/trailer2"
+            android:drawableLeft="@drawable/ic_play_arrow"
+            android:drawablePadding="5dp"
             android:padding="20dp"
             android:layout_below="@+id/trailer1"
             android:layout_alignParentStart="true"
@@ -148,7 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Review"
+            android:text="@string/review"
             android:id="@+id/review_title"
             android:paddingStart="20dp"
             android:paddingTop="5dp"
@@ -156,10 +160,13 @@
             android:layout_alignParentStart="true"
             android:textColor="@color/colorPrimaryText" />
 
-        <ListView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/reviewList"
+            android:id="@+id/review"
+            android:padding="20dp"
+            android:textColor="@color/colorSecondaryText"
+            android:text="@string/no_reviews"
             android:layout_below="@+id/review_title"/>
 
     </RelativeLayout>
