@@ -8,23 +8,34 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
 
         tools:context="com.example.pbhopalka.popularmovies.MovieDetails">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="150sp"
+            android:layout_height="100sp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Movie Name"
+            android:text="@string/movie_name"
             android:id="@+id/movieName"
-            android:background="@android:color/holo_green_light"
-            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/colorPrimaryLight"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
             android:gravity="bottom"
             android:padding="10dp"
             android:visibility="visible" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/favorite"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@+id/movieName"
+            android:src="@drawable/heart_white"
+            android:layout_marginBottom="-32dp"
+            android:layout_marginEnd="20dp"
+            android:clickable="true" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -37,7 +48,6 @@
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:weightSum="2"
                 android:id="@+id/linearLayout">
 
@@ -45,39 +55,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/poster"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true"
                     android:scaleType="centerInside"
                     android:adjustViewBounds="true"
-                    android:minWidth="240dp"
-                    android:minHeight="160dp" />
+                    android:minWidth="200dp"
+                    android:minHeight="250dp"
+                    android:contentDescription="@string/movie_poster"/>
             </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toRightOf="@+id/linearLayout"
+                android:layout_toEndOf="@+id/linearLayout"
                 android:layout_alignBottom="@id/linearLayout"
-                android:padding="10dp">
+                android:paddingBottom="100dp"
+                android:paddingStart="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Year"
+                    android:text="@string/year"
                     android:id="@+id/year"
-                    android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/poster"
+                    android:textColor="@color/colorPrimaryText"
                     android:textSize="25sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rating"
+                    android:text="@string/rating"
                     android:id="@+id/rating"
-                    android:layout_below="@+id/year"
-                    android:layout_toRightOf="@+id/poster"
-                    android:layout_alignParentStart="true"
+                    android:textColor="@color/colorPrimaryText"
                     android:textSize="20sp" />
 
             </LinearLayout>
@@ -92,7 +99,12 @@
             android:id="@+id/synopsis"
             android:layout_below="@+id/relativeLayout"
             android:padding="20dp"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:textColor="@color/colorSecondaryText"/>
+
+        <View style="@style/Divider"
+            android:id="@+id/divider1"
+            android:layout_below="@+id/synopsis"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -100,10 +112,11 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Trailer"
             android:id="@+id/trailer_title"
-            android:layout_below="@+id/synopsis"
+            android:layout_below="@+id/divider1"
             android:paddingTop="5dp"
-            android:paddingLeft="20dp"
-            android:layout_alignParentStart="true" />
+            android:paddingStart="20dp"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/colorPrimaryText"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -113,7 +126,8 @@
             android:id="@+id/trailer1"
             android:padding="20dp"
             android:layout_below="@+id/trailer_title"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:textColor="@color/colorSecondaryText"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -123,7 +137,12 @@
             android:id="@+id/trailer2"
             android:padding="20dp"
             android:layout_below="@+id/trailer1"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:textColor="@color/colorSecondaryText"/>
+
+        <View style="@style/Divider"
+            android:layout_below="@+id/trailer2"
+            android:id="@+id/divider2"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -131,21 +150,17 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Review"
             android:id="@+id/review_title"
-            android:paddingLeft="20dp"
+            android:paddingStart="20dp"
             android:paddingTop="5dp"
-            android:layout_below="@+id/trailer2"
-            android:layout_alignParentStart="true" />
+            android:layout_below="@+id/divider2"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/colorPrimaryText" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <ListView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Review text"
-            android:id="@+id/review"
-            android:padding="20dp"
-            android:layout_below="@+id/review_title"
-            android:layout_alignParentStart="true" />
-
+            android:id="@+id/reviewList"
+            android:layout_below="@+id/review_title"/>
 
     </RelativeLayout>
 </ScrollView>
