@@ -7,11 +7,22 @@
     <string name="sort_by">Sort by</string>
     <string name="title_activity_settings">Settings</string>
 
-    <!-- Strings related to Settings -->
+    <!-- Strings for various placeholders -->
+    <string name="movie_name">Movie Name</string>
+    <string name="overview">Overview</string>
+    <string name="trailer">Trailer</string>
+    <string name="trailer1">Trailer 1</string>
+    <string name="trailer2">Trailer 2</string>
+    <string name="review">Review</string>
+    <string name="no_reviews">No Reviews Found!</string>
+    <string name="movie_poster">Movie Poster</string>
+    <string name="year">Year</string>
+    <string name="rating">Rating</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
+    <!-- Strings related to Settings -->
     <string-array name="pref_sortBy_titles">
         <item>Most Popular</item>
         <item>Top Rating</item>
