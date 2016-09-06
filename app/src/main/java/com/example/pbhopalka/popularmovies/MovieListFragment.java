@@ -41,6 +41,9 @@ public class MovieListFragment extends Fragment {
     GridView gridView;
     ProgressBar spinner;
 
+    static int state;
+    String sorted;
+
     public MovieListFragment() {
         // Required empty public constructor
     }
@@ -102,7 +105,13 @@ public class MovieListFragment extends Fragment {
 
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String sortOrder = pref.getString("sort", "popular");
-            execute(sortOrder);
+            Log.d("sortOrder", sortOrder);
+            if (!sortOrder.equals(sorted)) {
+                sorted = sortOrder;
+                execute(sortOrder);
+            }
+            else
+                spinner.setVisibility(View.INVISIBLE);
         }
         else{
             Log.v(MainActivity.class.getSimpleName(), "No Internet connection");
@@ -137,15 +146,10 @@ public class MovieListFragment extends Fragment {
 
         for(int i = 0; i < movieLists.length(); i++){
             try{
-
                 JSONObject object = movieLists.getJSONObject(i);
                 posterPaths.add(object.getString(POSTER_PATH));
-
-
             } catch (JSONException e) {
-
                 return;
-
             }
         }
         gridView.setAdapter(new ImageAdapter(getActivity(), posterPaths));
@@ -185,12 +189,10 @@ public class MovieListFragment extends Fragment {
         queue.add(movies);
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
         spinner.setVisibility(View.VISIBLE);
         updateMovieList();
     }
-
 }
