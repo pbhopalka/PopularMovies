@@ -12,16 +12,24 @@ import android.widget.Spinner;
 
 public class MainActivity extends AppCompatActivity {
 
+    private boolean twoPane;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new MovieListFragment())
-                    .commit();
+
+        if (findViewById(R.id.movieDetail_fragment) != null){
+            twoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.movieDetail_fragment, new MovieDetailsFragment())
+                        .commit();
+            }
         }
+        else
+            twoPane = false;
+
     }
 
     @Override
@@ -35,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
         //String EXTRA_SHOW_FRAGMENT = ":android:show_fragment";
         //String EXTRA_NO_HEADERS = ":android:no_headers";
         int itemId = item.getItemId();
+        if (itemId == R.id.show_favorites){
+            Intent favoritesIntent = new Intent(this, FavoriteMovies.class);
+            startActivity(favoritesIntent);
+            return true;
+        }
         if (itemId == R.id.action_settings){
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             settingsIntent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT,
