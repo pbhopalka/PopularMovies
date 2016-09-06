@@ -34,6 +34,8 @@ import org.json.JSONObject;
  */
 public class MovieDetailsFragment extends Fragment {
 
+    static final String SELECTED_MOVIE = "selected";
+
     final String MOVIE_NAME = "title";
     final String MOVIE_POSTER = "poster_path";
     final String RELEASE_DATE = "release_date";
@@ -58,6 +60,7 @@ public class MovieDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_movie_details, container, false);
 
         final String BASE_URL = "http://image.tmdb.org/t/p/";
@@ -88,15 +91,23 @@ public class MovieDetailsFragment extends Fragment {
             Log.e(getClass().getSimpleName(), "No favorites exist");
         }
 
+        String intentExtra;
+
         Intent intent = getActivity().getIntent();
 
         if (intent == null || intent.getStringExtra("movie") == null){
-            return null;
+            Bundle args = getArguments();
+            if (args == null)
+                return null;
+            intentExtra = args.getString(MovieDetailsFragment.SELECTED_MOVIE);
+        }
+        else{
+            intentExtra = intent.getStringExtra("movie");
         }
 
         try{
 
-            movie = new JSONObject(intent.getStringExtra("movie"));
+            movie = new JSONObject(intentExtra);
 
             Log.v(getClass().getSimpleName(), movie.toString());
 
@@ -115,7 +126,7 @@ public class MovieDetailsFragment extends Fragment {
                     .load(BASE_URL + POSTER_SIZE + movie.getString(MOVIE_POSTER)).into(poster);
 
             currentFavorite = false;
-/*
+
             if (movieArray != null) {
                 for (int i = 0; i < movieArray.length(); i++) {
                     JSONObject object = movieArray.getJSONObject(i);
@@ -126,7 +137,7 @@ public class MovieDetailsFragment extends Fragment {
                     }
                 }
             }
-*/
+
             if (currentFavorite)
                 favorite.setImageResource(R.drawable.ic_favorite);
             else

@@ -42,8 +42,15 @@ public class MovieDetails extends AppCompatActivity {
         setContentView(R.layout.activity_movie_details);
 
         if (savedInstanceState == null){
+
+            Bundle args = new Bundle();
+            args.putString(MovieDetailsFragment.SELECTED_MOVIE, getIntent().getStringExtra("movie"));
+
+            MovieDetailsFragment fragment = new MovieDetailsFragment();
+            fragment.setArguments(args);
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.movieDetail_fragment, new MovieDetailsFragment())
+                    .add(R.id.movieDetail_fragment, fragment)
                     .commit();
         }
 

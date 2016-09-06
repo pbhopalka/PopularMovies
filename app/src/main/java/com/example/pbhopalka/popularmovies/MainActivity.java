@@ -9,15 +9,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieListFragment.Callback {
 
     private boolean twoPane;
+    TextView placeholder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        placeholder = (TextView) findViewById(R.id.movieDetail_noText);
 
         if (findViewById(R.id.movieDetail_fragment) != null){
             twoPane = true;
@@ -30,6 +34,28 @@ public class MainActivity extends AppCompatActivity {
         else
             twoPane = false;
 
+    }
+
+    @Override
+    public void onItemSelected(String selectedMovie) {
+        if (twoPane){
+
+            placeholder.setVisibility(View.INVISIBLE);
+
+            Bundle args = new Bundle();
+            args.putString(MovieDetailsFragment.SELECTED_MOVIE, selectedMovie);
+            MovieDetailsFragment fragment = new MovieDetailsFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movieDetail_fragment, fragment)
+                    .commit();
+
+        }else{
+            Intent intent = new Intent(this, MovieDetails.class);
+            intent.putExtra("movie", selectedMovie);
+            startActivity(intent);
+        }
     }
 
     @Override

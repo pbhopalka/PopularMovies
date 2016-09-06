@@ -1,13 +1,13 @@
 package com.example.pbhopalka.popularmovies;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,8 +44,15 @@ public class MovieListFragment extends Fragment {
     static int state;
     String sorted;
 
+    private int sPosition = gridView.INVALID_POSITION;
+    String SCROLL_KEY = "scroll_key";
+
     public MovieListFragment() {
         // Required empty public constructor
+    }
+
+    public interface Callback{
+        void onItemSelected(String selectedMovie);
     }
 
     @Override
@@ -78,7 +85,11 @@ public class MovieListFragment extends Fragment {
         //Log.v(MainActivity.class.getSimpleName(), "ProgressBar is gone" + spinner.getVisibility());
 
         updateMovieList();
-        
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(SCROLL_KEY)){
+            sPosition = savedInstanceState.getInt(SCROLL_KEY);
+        }
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -87,13 +98,13 @@ public class MovieListFragment extends Fragment {
 
                     movie = movieLists.getJSONObject(position);
                     Log.v(getActivity().getClass().getSimpleName(), movie + "");
-                    Intent intent = new Intent(getActivity(), MovieDetails.class);
-                    intent.putExtra("movie", movie.toString());
-                    startActivity(intent);
+
+                    ((Callback) getActivity()).onItemSelected(movie.toString());
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                sPosition = position;
             }
         });
 
@@ -153,6 +164,13 @@ public class MovieListFragment extends Fragment {
             }
         }
         gridView.setAdapter(new ImageAdapter(getActivity(), posterPaths));
+
+        //Log.d("ScrollPositionAgain", Integer.toString(sPosition));
+        //Log.d("gridPosition", Integer.toString(gridView.INVALID_POSITION));
+
+        if (sPosition != gridView.INVALID_POSITION)
+            gridView.smoothScrollByOffset(sPosition/2);
+
         spinner.setVisibility(View.INVISIBLE);
     }
 
@@ -194,5 +212,14 @@ public class MovieListFragment extends Fragment {
         super.onStart();
         spinner.setVisibility(View.VISIBLE);
         updateMovieList();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        //Log.d("Onsave_scrollPosition", Integer.toString(sPosition));
+
+        if (sPosition != gridView.INVALID_POSITION)
+            outState.putInt(SCROLL_KEY, sPosition);
+        super.onSaveInstanceState(outState);
     }
 }
