@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -80,14 +81,21 @@ public class MovieListFragment extends Fragment {
         gridView = (GridView)rootView.findViewById(R.id.gridView);
         spinner = (ProgressBar)rootView.findViewById(R.id.progressBar);
 
-        spinner.setVisibility(View.VISIBLE);
+        if (savedInstanceState != null) {
+            try {
 
-        //Log.v(MainActivity.class.getSimpleName(), "ProgressBar is gone" + spinner.getVisibility());
+                movieLists = new JSONArray(savedInstanceState.getString("movieLists"));
+                posterPaths = savedInstanceState.getStringArrayList("posterPath");
+                sorted = savedInstanceState.getString("sortOrder");
+                gridView.setAdapter(new ImageAdapter(getActivity(), posterPaths));
+                spinner.setVisibility(View.INVISIBLE);
 
-        updateMovieList();
-
-        if (savedInstanceState != null && savedInstanceState.containsKey(SCROLL_KEY)){
-            sPosition = savedInstanceState.getInt(SCROLL_KEY);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.d("SavedInstanceState", "Save Instance null");
+            updateMovieList();
         }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -111,15 +119,37 @@ public class MovieListFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("OnStart", "Onstart");
+        if (sorted != null) {
+            Log.d("sortOrder", sorted);
+            Log.d("sortOrder2", getSortOrder());
+            if (!getSortOrder().equals(sorted)) {
+                Log.d("SortOrderChanged", "Sort Order has changed");
+                updateMovieList();
+            }
+        }
+    }
+
+    private String getSortOrder(){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortOrder = pref.getString("sort", "popular");
+        return sortOrder;
+    }
+
     private void updateMovieList(){
         if (isNetworkConnected()){
 
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String sortOrder = pref.getString("sort", "popular");
-            Log.d("sortOrder", sortOrder);
+            spinner.setVisibility(View.VISIBLE);
+
+            String sortOrder = getSortOrder();
+
+            //Log.d("sortOrder", sortOrder);
             if (!sortOrder.equals(sorted)) {
                 sorted = sortOrder;
-                execute(sortOrder);
+                execute(sorted);
             }
             else
                 spinner.setVisibility(View.INVISIBLE);
@@ -168,8 +198,7 @@ public class MovieListFragment extends Fragment {
         //Log.d("ScrollPositionAgain", Integer.toString(sPosition));
         //Log.d("gridPosition", Integer.toString(gridView.INVALID_POSITION));
 
-        if (sPosition != gridView.INVALID_POSITION)
-            gridView.smoothScrollByOffset(sPosition/2);
+
 
         spinner.setVisibility(View.INVISIBLE);
     }
@@ -208,18 +237,16 @@ public class MovieListFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        spinner.setVisibility(View.VISIBLE);
-        updateMovieList();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         //Log.d("Onsave_scrollPosition", Integer.toString(sPosition));
 
         if (sPosition != gridView.INVALID_POSITION)
             outState.putInt(SCROLL_KEY, sPosition);
+        if (movieLists != null) {
+            outState.putString("movieLists", movieLists.toString());
+            outState.putStringArrayList("posterPath", posterPaths);
+            outState.putString("sortOrder", sorted);
+        }
         super.onSaveInstanceState(outState);
     }
 }
