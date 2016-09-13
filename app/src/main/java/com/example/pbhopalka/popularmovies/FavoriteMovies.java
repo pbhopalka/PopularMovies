@@ -1,11 +1,13 @@
 package com.example.pbhopalka.popularmovies;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,24 +22,20 @@ import java.util.Map;
 
 public class FavoriteMovies extends AppCompatActivity {
 
-
-
     final String FAV_MOVIE = "FAV_MOVIE";
     final String MOVIE_NAME = "title";
 
     ArrayAdapter<String> movieArrayAdapter;
     JSONArray moviesArray;
 
+    ListView favoritesList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite_movies);
 
-        ListView favoritesList = (ListView) findViewById(R.id.favoriteList);
-
-        getMovieList();
-
-        favoritesList.setAdapter(movieArrayAdapter);
+        favoritesList = (ListView) findViewById(R.id.favoriteList);
 
         favoritesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -53,6 +51,15 @@ public class FavoriteMovies extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        getMovieList();
+
+        favoritesList.setAdapter(movieArrayAdapter);
     }
 
     private void getMovieList() {
